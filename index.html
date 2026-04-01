@@ -1,93 +1,74 @@
+ตอนนี้มีไฟล์ index.html แล้ว ให้กดเข้าไปที่ไฟล์ index.html
+
+แล้วกดรูปดินสอ Edit มุมขวาบน จากนั้นลบโค้ดเก่าทิ้งทั้งหมด แล้ววางโค้ดนี้ลงไป
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบตรวจสอบผลการเรียนออนไลน์</title>
+  <title>ระบบตรวจสอบผลการเรียน</title>
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
       background: #f4f6fb;
-      color: #333;
-    }
-
-    header {
-      background: linear-gradient(to right, #4b0082, #7b2cbf);
-      color: white;
-      padding: 25px;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 32px;
+      padding: 20px;
     }
 
     .container {
       max-width: 1100px;
-      margin: 30px auto;
-      padding: 20px;
+      margin: auto;
     }
 
-    .card {
+    .login-box, .dashboard {
       background: white;
-      border-radius: 15px;
       padding: 25px;
-      margin-bottom: 25px;
+      border-radius: 20px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
     }
 
-    h2 {
-      color: #4b0082;
+    h1 {
+      text-align: center;
+      color: #5e35b1;
     }
 
     input, button {
+      width: 100%;
       padding: 12px;
-      margin: 5px;
-      border-radius: 8px;
+      margin-top: 10px;
+      border-radius: 10px;
       border: 1px solid #ccc;
-      font-size: 15px;
-    }
-
-    input {
-      width: 200px;
+      font-size: 16px;
     }
 
     button {
-      background: #7b2cbf;
+      background: #5e35b1;
       color: white;
       border: none;
       cursor: pointer;
+      transition: 0.3s;
     }
 
     button:hover {
-      background: #5a189a;
-    }
-
-    .danger {
-      background: #d90429;
-    }
-
-    .edit {
-      background: #2a9d8f;
+      background: #4527a0;
     }
 
     .hidden {
       display: none;
     }
 
-    .student-info {
-      background: #f8f9fa;
+    .student-card {
+      background: #fafafa;
       padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
-
-    .rank {
-      font-size: 22px;
-      font-weight: bold;
-      color: #7b2cbf;
+      border-radius: 15px;
+      margin-top: 15px;
+      border-left: 6px solid #5e35b1;
     }
 
     .low-gpa {
@@ -105,57 +86,45 @@
       font-weight: bold;
     }
 
-    .status-warning {
-      color: orange;
-      font-weight: bold;
-    }
-
     .status-fail {
       color: red;
       font-weight: bold;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+    .subject {
+      margin-top: 15px;
     }
 
-    th {
-      background: #7b2cbf;
-      color: white;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-    }
-
-    .progress-bar {
-      width: 100%;
+    .bar {
       background: #ddd;
       border-radius: 10px;
       overflow: hidden;
-      height: 18px;
+      height: 20px;
     }
 
-    .progress-fill {
+    .bar-fill {
       height: 100%;
-      background: linear-gradient(to right, #7b2cbf, #9d4edd);
+      background: #5e35b1;
+      text-align: right;
       color: white;
+      padding-right: 8px;
       font-size: 12px;
-      line-height: 18px;
+      line-height: 20px;
+    }
+
+    #searchInput {
+      margin-bottom: 15px;
     }
 
     .spinner {
       border: 5px solid #eee;
-      border-top: 5px solid #7b2cbf;
+      border-top: 5px solid #5e35b1;
       border-radius: 50%;
       width: 40px;
       height: 40px;
       animation: spin 1s linear infinite;
       margin: 20px auto;
+      display: none;
     }
 
     @keyframes spin {
@@ -164,365 +133,179 @@
       }
     }
 
-    @media(max-width:768px) {
+    @media(max-width: 768px) {
       table, thead, tbody, th, td, tr {
         display: block;
-        width: 100%;
-      }
-
-      th {
-        display: none;
       }
 
       tr {
         background: white;
         margin-bottom: 15px;
-        border-radius: 10px;
         padding: 10px;
+        border-radius: 15px;
       }
 
       td {
-        border: none;
-        text-align: left;
+        padding: 8px 0;
       }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>ระบบตรวจสอบผลการเรียนออนไลน์</h1>
-  <p>International Center for Excellence</p>
-</header>
-
 <div class="container">
-
-  <div class="card">
-    <h2>เข้าสู่ระบบแอดมิน</h2>
-
-    <input type="password" id="adminPass" placeholder="รหัสผ่านแอดมิน">
-    <button onclick="loginAdmin()">เข้าสู่ระบบ</button>
-
-    <div id="adminPanel" class="hidden">
-      <h2>จัดการนักเรียน</h2>
-
-      <input type="text" id="liveSearch" placeholder="ค้นหาชื่อ..." onkeyup="searchStudent()">
-      <br>
-
-      <input type="text" id="studentCode" placeholder="รหัสนักเรียน">
-      <input type="text" id="studentName" placeholder="ชื่อนักเรียน">
-      <input type="date" id="studentBirth">
-
-      <button onclick="addStudent()">เพิ่มนักเรียน</button>
-      <button onclick="exportCSV()">ดาวน์โหลด CSV</button>
-      <button onclick="window.print()">ดาวน์โหลด PDF</button>
-
-      <table id="studentTable">
-        <thead>
-          <tr>
-            <th>รหัส</th>
-            <th>ชื่อ</th>
-            <th>GPA</th>
-            <th>อันดับ</th>
-            <th>สถานะ</th>
-            <th>จัดการ</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+  <div class="login-box" id="loginBox">
+    <h1>ระบบตรวจสอบผลการเรียน</h1>
+    <input type="text" id="studentId" placeholder="รหัสนักเรียน">
+    <input type="date" id="birthDate">
+    <button onclick="login()">เข้าสู่ระบบ</button>
   </div>
 
-  <div class="card">
-    <h2>ตรวจสอบผลการเรียน</h2>
+  <div class="spinner" id="spinner"></div>
 
-    <input type="text" id="searchCode" placeholder="รหัสนักเรียน">
-    <input type="date" id="searchBirth">
-    <button onclick="checkGrade()">ดูผลการเรียน</button>
+  <div class="dashboard hidden" id="dashboard">
+    <h1>ผลการเรียน</h1>
 
-    <div id="loading" class="hidden">
-      <div class="spinner"></div>
-    </div>
+    <input type="text" id="searchInput" placeholder="ค้นหาชื่อนักเรียน..." onkeyup="searchStudent()">
 
-    <div id="resultBox"></div>
+    <div id="studentResult"></div>
+
+    <button onclick="exportCSV()">Export CSV</button>
+    <button onclick="window.print()">Export PDF</button>
   </div>
-
 </div>
 
 <script>
-const adminPassword = "admin123";
+  const students = [
+    {
+      id: "S001",
+      birth: "2012-08-21",
+      name: "มายู",
+      gpa: 3.82,
+      status: "ผ่าน",
+      subjects: [
+        { name: "คณิตศาสตร์", score: 88 },
+        { name: "วิทยาศาสตร์", score: 92 },
+        { name: "ภาษาอังกฤษ", score: 95 }
+      ]
+    },
+    {
+      id: "S002",
+      birth: "2012-05-10",
+      name: "เถิด",
+      gpa: 1.85,
+      status: "มส",
+      subjects: [
+        { name: "คณิตศาสตร์", score: 45 },
+        { name: "วิทยาศาสตร์", score: 50 },
+        { name: "ภาษาอังกฤษ", score: 40 }
+      ]
+    },
+    {
+      id: "S003",
+      birth: "2012-03-14",
+      name: "อามี่",
+      gpa: 3.20,
+      status: "ผ่าน",
+      subjects: [
+        { name: "คณิตศาสตร์", score: 80 },
+        { name: "วิทยาศาสตร์", score: 78 },
+        { name: "ภาษาอังกฤษ", score: 85 }
+      ]
+    },
+    {
+      id: "S004",
+      birth: "2012-11-02",
+      name: "จีโน่",
+      gpa: 2.10,
+      status: "ร",
+      subjects: [
+        { name: "คณิตศาสตร์", score: 60 },
+        { name: "วิทยาศาสตร์", score: 58 },
+        { name: "ภาษาอังกฤษ", score: 62 }
+      ]
+    }
+  ];
 
-let students = [
-  {
-    code: "S001",
-    name: "มายู",
-    birth: "2012-08-21",
-    grades: {
-      "ไทย": 4,
-      "คณิต": 3.5,
-      "วิทยาศาสตร์": 4,
-      "อังกฤษ": 3.5
-    }
-  },
-  {
-    code: "S002",
-    name: "เถิด",
-    birth: "2012-05-10",
-    grades: {
-      "ไทย": 2,
-      "คณิต": 2.5,
-      "วิทยาศาสตร์": 2,
-      "อังกฤษ": 2
-    }
-  },
-  {
-    code: "S003",
-    name: "อามี่",
-    birth: "2012-02-14",
-    grades: {
-      "ไทย": 4,
-      "คณิต": 4,
-      "วิทยาศาสตร์": 4,
-      "อังกฤษ": 4
-    }
-  },
-  {
-    code: "S004",
-    name: "จีโน่",
-    birth: "2012-11-30",
-    grades: {
-      "ไทย": 1,
-      "คณิต": 1.5,
-      "วิทยาศาสตร์": 1,
-      "อังกฤษ": 1
-    }
-  }
-];
-
-function loadData() {
-  const saved = localStorage.getItem("students");
-  if (saved) {
-    students = JSON.parse(saved);
-  }
-}
-
-function saveData() {
   localStorage.setItem("students", JSON.stringify(students));
-}
 
-function calculateGPA(student) {
-  const grades = Object.values(student.grades);
-  const total = grades.reduce((a, b) => a + b, 0);
-  return (total / grades.length).toFixed(2);
-}
+  function login() {
+    const id = document.getElementById("studentId").value;
+    const birth = document.getElementById("birthDate").value;
+    const studentData = JSON.parse(localStorage.getItem("students"));
 
-function getStatus(gpa) {
-  if (gpa >= 2) {
-    return '<span class="status-pass">ผ่าน</span>';
-  } else if (gpa >= 1) {
-    return '<span class="status-warning">ติด ร</span>';
-  } else {
-    return '<span class="status-fail">มส</span>';
-  }
-}
+    document.getElementById("spinner").style.display = "block";
 
-function updateRanks() {
-  students.forEach(student => {
-    student.gpa = calculateGPA(student);
-  });
+    setTimeout(() => {
+      document.getElementById("spinner").style.display = "none";
 
-  students.sort((a, b) => b.gpa - a.gpa);
+      const student = studentData.find(s => s.id === id && s.birth === birth);
 
-  students.forEach((student, index) => {
-    student.rank = index + 1;
-  });
-
-  updateTable();
-  saveData();
-}
-
-function updateTable() {
-  const tbody = document.querySelector("#studentTable tbody");
-  tbody.innerHTML = "";
-
-  students.forEach((student, index) => {
-    let gpaClass = "";
-
-    if (student.gpa < 2) {
-      gpaClass = "low-gpa";
-    } else if (student.gpa >= 3.5) {
-      gpaClass = "high-gpa";
-    }
-
-    tbody.innerHTML += `
-      <tr>
-        <td>${student.code}</td>
-        <td>${student.name}</td>
-        <td class="${gpaClass}">
-          ${student.gpa} ${student.gpa >= 3.5 ? "🏅" : ""}
-        </td>
-        <td>${student.rank}</td>
-        <td>${getStatus(student.gpa)}</td>
-        <td>
-          <button class="edit" onclick="editStudent(${index})">แก้ไข</button>
-          <button class="danger" onclick="deleteStudent(${index})">ลบ</button>
-        </td>
-      </tr>
-    `;
-  });
-}
-
-function loginAdmin() {
-  const pass = document.getElementById("adminPass").value;
-
-  if (pass === adminPassword) {
-    document.getElementById("adminPanel").classList.remove("hidden");
-    alert("เข้าสู่ระบบสำเร็จ");
-  } else {
-    alert("รหัสผ่านไม่ถูกต้อง");
-  }
-}
-
-function addStudent() {
-  const code = document.getElementById("studentCode").value.trim();
-  const name = document.getElementById("studentName").value.trim();
-  const birth = document.getElementById("studentBirth").value;
-
-  if (!code || !name || !birth) {
-    alert("กรุณากรอกข้อมูลให้ครบ");
-    return;
+      if(student) {
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        displayStudent(student);
+      } else {
+        alert("ไม่พบข้อมูลนักเรียน");
+      }
+    }, 1500);
   }
 
-  students.push({
-    code,
-    name,
-    birth,
-    grades: {
-      "ไทย": 0,
-      "คณิต": 0,
-      "วิทยาศาสตร์": 0,
-      "อังกฤษ": 0
-    }
-  });
-
-  updateRanks();
-}
-
-function editStudent(index) {
-  const student = students[index];
-
-  const newName = prompt("แก้ชื่อ", student.name);
-  if (newName !== null) student.name = newName;
-
-  for (let subject in student.grades) {
-    const newGrade = prompt(`แก้เกรด ${subject}`, student.grades[subject]);
-    if (newGrade !== null) {
-      student.grades[subject] = parseFloat(newGrade) || 0;
-    }
-  }
-
-  updateRanks();
-}
-
-function deleteStudent(index) {
-  if (confirm("ต้องการลบนักเรียนหรือไม่")) {
-    students.splice(index, 1);
-    updateRanks();
-  }
-}
-
-function searchStudent() {
-  const keyword = document.getElementById("liveSearch").value.toLowerCase();
-  const rows = document.querySelectorAll("#studentTable tbody tr");
-
-  rows.forEach(row => {
-    row.style.display = row.innerText.toLowerCase().includes(keyword) ? "" : "none";
-  });
-}
-
-function exportCSV() {
-  let csv = "รหัส,ชื่อ,GPA,อันดับ\n";
-
-  students.forEach(student => {
-    csv += `${student.code},${student.name},${student.gpa},${student.rank}\n`;
-  });
-
-  const blob = new Blob([csv], { type: "text/csv" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "students.csv";
-  link.click();
-}
-
-function checkGrade() {
-  document.getElementById("loading").classList.remove("hidden");
-
-  setTimeout(() => {
-    document.getElementById("loading").classList.add("hidden");
-
-    const code = document.getElementById("searchCode").value.trim();
-    const birth = document.getElementById("searchBirth").value;
-
-    const student = students.find(s => s.code === code && s.birth === birth);
-
-    if (!student) {
-      document.getElementById("resultBox").innerHTML = `
-        <div class="student-info">ไม่พบข้อมูลนักเรียน</div>
-      `;
-      return;
-    }
-
-    let gpaClass = "";
-
-    if (student.gpa < 2) {
-      gpaClass = "low-gpa";
-    } else if (student.gpa >= 3.5) {
-      gpaClass = "high-gpa";
-    }
+  function displayStudent(student) {
+    const gpaClass = student.gpa < 2 ? "low-gpa" : "high-gpa";
+    const medal = student.gpa > 3.5 ? "🏅" : "";
+    const statusClass = student.status === "ผ่าน" ? "status-pass" : "status-fail";
 
     let html = `
-      <div class="student-info">
-        <h3>${student.name}</h3>
-        <p>รหัส: ${student.code}</p>
-        <p class="rank ${gpaClass}">
-          GPA: ${student.gpa} ${student.gpa >= 3.5 ? "🏅" : ""}
-        </p>
-        <p>${getStatus(student.gpa)}</p>
-
-        <table>
-          <tr>
-            <th>วิชา</th>
-            <th>เกรด</th>
-            <th>คะแนน</th>
-          </tr>
+      <div class="student-card">
+        <h2>${student.name} ${medal}</h2>
+        <p>รหัสนักเรียน: ${student.id}</p>
+        <p class="${gpaClass}">GPA: ${student.gpa}</p>
+        <p class="${statusClass}">สถานะ: ${student.status}</p>
     `;
 
-    for (let subject in student.grades) {
-      const percent = (student.grades[subject] / 4) * 100;
-
+    student.subjects.forEach(sub => {
       html += `
-        <tr>
-          <td>${subject}</td>
-          <td>${student.grades[subject]}</td>
-          <td>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width:${percent}%">
-                ${percent.toFixed(0)}%
-              </div>
-            </div>
-          </td>
-        </tr>
+        <div class="subject">
+          <p>${sub.name} - ${sub.score} คะแนน</p>
+          <div class="bar">
+            <div class="bar-fill" style="width:${sub.score}%">${sub.score}%</div>
+          </div>
+        </div>
       `;
+    });
+
+    html += `</div>`;
+    document.getElementById("studentResult").innerHTML = html;
+  }
+
+  function searchStudent() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    const studentData = JSON.parse(localStorage.getItem("students"));
+
+    const found = studentData.find(s => s.name.toLowerCase().includes(input));
+
+    if(found) {
+      displayStudent(found);
     }
+  }
 
-    html += `</table></div>`;
-    document.getElementById("resultBox").innerHTML = html;
-  }, 1000);
-}
+  function exportCSV() {
+    const studentData = JSON.parse(localStorage.getItem("students"));
+    let csv = "ชื่อ,GPA,สถานะ\n";
 
-loadData();
-updateRanks();
+    studentData.forEach(s => {
+      csv += `${s.name},${s.gpa},${s.status}\n`;
+    });
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "students.csv";
+    a.click();
+  }
 </script>
 
 </body>
 </html>
+
